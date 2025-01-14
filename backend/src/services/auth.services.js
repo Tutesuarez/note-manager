@@ -12,7 +12,6 @@ export const findOneByEmail = async(email)=>{
 }
 
 export const createOne = async(obj)=>{
-    console.log('objeto en services', obj);
  try {
     const newUser = await UserManager.createOne(obj)
     
@@ -23,4 +22,4 @@ export const createOne = async(obj)=>{
 }
 
 
-module.exports = { registerUser, loginUser };
+

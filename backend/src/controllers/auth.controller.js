@@ -1,6 +1,7 @@
 import { createHash } from "../utils/bcrypt.js"
 import { createOne, findOneByEmail } from "../services/auth.services.js";
-import {generateToken} from '../utils/tokengenerator.js'
+import {generateToken} from '../utils/tokengenerator.js';
+import { isValidPassword } from "../utils/bcrypt.js";
 
 // Registrar un nuevo usuario
 const registerUser = async (req, res) => {
@@ -14,22 +15,22 @@ const registerUser = async (req, res) => {
         error: "User already exists",
         message: "User already exists"});
     }
-
+ console.log(' antes de hashear');
+ 
     const newUser = {
         username,
         email,
         password: createHash(password),
     };
 
+    console.log(newUser);
+    
     const user = await createOne(newUser);
 
     if (user) {
-      res.status(201).json({
-        _id: user.id,
-        username: user.username,
-        email: user.email,
-        token: generateToken(user.id),
-      });
+      const token = generateToken({ id: user._id });
+        res.cookie("tokenBE", token, { maxAge: 60 * 60 * 1000, httpOnly: true })
+           .send({ status: "success", redirectURL: "/login" });
     } else {
       res.status(400).json({ message: 'Datos de usuario inválidos' });
     }
@@ -58,7 +59,10 @@ const loginUser = async (req, res) => {
             });
         }
 
-        if (!isValidPassword(user, password)) {
+
+        const isValid = isValidPassword(user,JSON.stringify(password))
+        
+        if (!isValid) {
             console.log("Invalid credentials");
             return res.status(401).send({
                 status: "error",
@@ -68,8 +72,10 @@ const loginUser = async (req, res) => {
         }
 
         delete user.password;
-        // req.session.user = user
+        //req.session.user = user
         console.log("usurio en login backend", user);
+        const token = generateToken(user);
+        res.cookie("tokenBE", token, { maxAge: 60 * 60 * 1000, httpOnly: true }).send({ status: "success" });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
