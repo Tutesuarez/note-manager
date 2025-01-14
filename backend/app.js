@@ -1,12 +1,18 @@
 import express from 'express'
+import session from 'express-session'
+import cookieParser from "cookie-parser"
 import cors from 'cors'
 import config from './src/config/config.js'
 import { connectDB } from './src/config/db.config.js'
+import MongoStore from 'connect-mongo'
 import authRouter from './src/routes/auth.routes.js'
 import taskRouter from './src/routes/task.routes.js'
 
 
 const PORT = config.port || 3000
+const sessions =  config.session_secret
+const URLDB = config.URL
+const cookieF = config.COOKIE_S
 
 // start  app
 const app = express()
@@ -18,15 +24,23 @@ connectDB()
 // middlewares
 app.use(cors())
 app.use(express.json()) // for parsing application/json
+app.use(express.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
+app.use(cookieParser(cookieF))
+app.use(session({
+    store: MongoStore.create({
+              mongoUrl: URLDB,
+              mongoOpcions:{useNewUrlParser:true, useUnifiedTopology:true},
+              ttl:36000 // segundos
+            }),
+    secret: sessions,
+    resave: false,
+    saveUninitialized: true,
+    }))
+
 
 //routes
 app.use('/api/user', authRouter)
 app.use('/api/tasks', taskRouter)
-
-app.get('/',(req, res)=>{
-    res.send('Api works correctly')
-})
-
 
 // start server
 app.listen(PORT, ()=>{

@@ -30,7 +30,7 @@ const registerUser = async (req, res) => {
     if (user) {
       const token = generateToken({ id: user._id });
         res.cookie("tokenBE", token, { maxAge: 60 * 60 * 1000, httpOnly: true })
-           .send({ status: "success", redirectURL: "/login" });
+           .send({ status: "success", redirectURL: "/task" });
     } else {
       res.status(400).json({ message: 'Datos de usuario inválidos' });
     }
@@ -60,7 +60,7 @@ const loginUser = async (req, res) => {
         }
 
 
-        const isValid = isValidPassword(user,JSON.stringify(password))
+        const isValid = isValidPassword(user, JSON.stringify(password))
         
         if (!isValid) {
             console.log("Invalid credentials");
@@ -72,10 +72,11 @@ const loginUser = async (req, res) => {
         }
 
         delete user.password;
-        //req.session.user = user
+        req.session.user = user
         console.log("usurio en login backend", user);
         const token = generateToken(user);
-        res.cookie("tokenBE", token, { maxAge: 60 * 60 * 1000, httpOnly: true }).send({ status: "success" });
+        res.cookie("tokenBE", token, { maxAge: 60 * 60 * 1000, httpOnly: true })
+        res.status(200).json({ status: "success", message: "Login successful" });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
