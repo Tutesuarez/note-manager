@@ -7,6 +7,7 @@ export const generateToken = (user)=>{
     const payload = {
         user: {
           id: user.id,
+          username: user.username,
           email: user.email,
         }}
     const token = jwt.sign(payload,jwt_code , {expiresIn:'1d' })
@@ -15,21 +16,21 @@ export const generateToken = (user)=>{
 }
 
 
-// // verificacion de token
-// export const verifyToken = async (req, res) => {
-//     const token  = req.cookies;
-//     if (!token) return res.send(false);
+// verificacion de token
+export const verifyToken = (req, res) => {
+    const token  = req.cookies.tokenBE;
+    
+    if (!token) return res.send(false);
+    
+    try { 
+      const isValidToken = jwt.verify(token, jwt_code)
+      
+      req.user = isValidToken.user
+      
+      return res.json( req.user)
+  } catch (error) {
+      res.status(401).json({ message: 'token error' })
+  }
 
-//     jwt.verify(token, jwt_code, async (error, user) => {
-//         if (error) return res.sendStatus(401);
-
-//         const userFound = await findOneByEmail(user.email);
-//         if (!userFound) return res.sendStatus(401);
-
-//         return res.json({
-//             id: userFound._id,
-//             username: userFound.username,
-//             email: userFound.email,
-//         });
-//     });
-// }
+    
+}

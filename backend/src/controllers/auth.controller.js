@@ -60,7 +60,7 @@ const loginUser = async (req, res) => {
         }
 
 
-        const isValid = isValidPassword(user, JSON.stringify(password))
+        const isValid = isValidPassword(user,password)
         
         if (!isValid) {
             console.log("Invalid credentials");
@@ -83,4 +83,9 @@ const loginUser = async (req, res) => {
 };
 
 
-export { registerUser, loginUser };
+const logout = async(req, res)=>{
+  res.clearCookie('tokenBE'); // Limpiar la cookie del token
+  res.status(200).json({ message: 'Sesión cerrada correctamente' });
+}
+
+export { registerUser, loginUser, logout };
