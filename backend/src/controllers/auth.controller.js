@@ -1,5 +1,5 @@
 import { createHash } from "../utils/bcrypt.js"
-import { createOne, findOneByEmail } from "../services/auth.services.js";
+import { createOne, findOneByEmail, setLastConnection } from "../services/auth.services.js";
 import {generateToken} from '../utils/tokengenerator.js';
 import { isValidPassword } from "../utils/bcrypt.js";
 
@@ -78,6 +78,7 @@ const loginUser = async (req, res) => {
         delete user.password;
         req.session.user = user
         console.log("usurio en login backend", user);
+        await setLastConnection(user._id)
         const token = generateToken(user);
         res.cookie("tokenBE", token, { maxAge: 60 * 60 * 1000, httpOnly: true })
         res.json({

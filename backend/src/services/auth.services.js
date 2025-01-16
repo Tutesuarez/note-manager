@@ -21,5 +21,14 @@ export const createOne = async(obj)=>{
  }
 }
 
+export const setLastConnection = async (uid) => { 
+    try { 
+        const setConnection = await UserManager.setLastConnection(uid) 
+        return setConnection 
+    } catch (error) { 
+        return error 
+    } 
+}
+
 
 

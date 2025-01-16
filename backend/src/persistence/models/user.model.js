@@ -17,10 +17,15 @@ const userSchema =new Schema({
     password:{
         type:String,
         required:true
-        }
+        },
+    last_conection:{
+        type:String
+    }
 },
 {
     timestamps:true
 })
+
+
 
 export const userModel = model(userCollection, userSchema)

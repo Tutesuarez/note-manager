@@ -3,9 +3,8 @@ import {taskModel} from "../persistence/models/task.model.js"
 
 
 const getAllTasks = async(req, res)=>{
-    // va dentro findall({user: req.user._id})
     try {
-        const tasksFound = await findAll()
+        const tasksFound = await findAll({user: req.user._id})
         res.status(200).json(tasksFound)
     } catch (error) {
         res.status(500).json({ message: "Error getting tasks" })

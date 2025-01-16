@@ -18,4 +18,16 @@ export default class userManager{
             return error
         }
     }
+
+    async setLastConnection(uid) {
+        try {
+            let result = await userModel.updateOne(
+                { _id: uid },
+                { $set: { last_connection: new Date().toISOString() } }
+            );
+            return result
+        } catch (error) {
+            return { error: error.message }
+        }
+    }
 }
