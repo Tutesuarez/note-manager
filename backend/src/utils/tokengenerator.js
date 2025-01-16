@@ -26,6 +26,7 @@ export const verifyToken = (req, res) => {
       const isValidToken = jwt.verify(token, jwt_code)
       
       req.user = isValidToken.user
+      console.log('user en verify', req.user);
       
       return res.json( req.user)
   } catch (error) {

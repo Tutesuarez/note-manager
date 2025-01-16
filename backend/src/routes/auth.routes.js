@@ -8,7 +8,7 @@ const authRouter = Router()
 
 authRouter.post('/register',registerUser) 
 authRouter.post('/login', loginUser)
-authRouter.get('/logout', logout)
-authRouter.get('/verify', jwtValidation, verifyToken)
+authRouter.post('/logout', logout)
+authRouter.get('/verify', verifyToken)
 
 export default authRouter

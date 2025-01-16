@@ -1,58 +1,61 @@
 import { createContext, useState, useEffect, useContext } from 'react';
 import { getUserFromTokenAPI, login as loginUserAPI, register as registerUserAPI, logoutsession } from '../services/api';
+import Cookies from "js-cookie";
+//import { useNavigate } from 'react-router-dom';
 
-export const AuthContext = createContext();
+export const AuthContext = createContext({
+  user: null,
+  IsAuthenticated:false
+});
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState();
+  const [user, setUser] = useState(null);
+  const [IsAuthenticated, setIsAuthenticated] = useState (false)
   const [loading, setLoading] = useState(true);
+
+  //let goTo = useNavigate()
 
   useEffect(() => {
     const fetchUser = async () => {
+      const cookies = Cookies.get();
+      if (!cookies.token) {
+        setIsAuthenticated(false);
+        setLoading(false);
+        return;
+      }
+
       try {
-        const response = await getUserFromTokenAPI();
-  
-        console.log('response en useEffect', response.data.user);
-  
-        // Verifica que la estructura de la respuesta contiene un usuario
-        if (response.data && response.data.user) {
-          setUser(response.data.user); // Establecer el usuario en el estado
-        }
+        const res = await getUserFromTokenAPI(cookies.token);
+        console.log(res);
+        if (!res.data) return setIsAuthenticated(false);
+        setIsAuthenticated(true);
+        setUser(res.data);
+        setLoading(false);
       } catch (error) {
-        console.error(
-          'No se pudo cargar el usuario desde el token:',
-          error.response?.data?.message || error.message
-        );
-      } finally {
-        setLoading(false); // Carga completada
+        setIsAuthenticated(false);
+        setLoading(false);
       }
     };
-  
-    const hasToken = document.cookie.includes('tokenBE');
-  if (hasToken) {
     fetchUser();
-  } else {
-    setLoading(false); // Si no hay token, terminamos la carga
-  }
   }, []);
-
 
   const login = async (email, password) => {
     try {
-      const  {data}  = await loginUserAPI(email, password); // Asegúrate de que loginUserAPI devuelva la respuesta correcta
-      console.log('data de usuario después del login', data);
-      
-      await fetchUser();
-    
+      const res = await loginUserAPI(email, password);      
+       setUser(res.data);
+       setIsAuthenticated(true);
     } catch (error) {
-      console.error('Login failed:', error.response?.data?.message);
+      console.log(error);
     }
   };
 
   const register = async (username ,email, password) => {
     try {
-      const  data  = await registerUserAPI(username,email, password);
-      await fetchUser()
+      const  res  = await registerUserAPI(username,email, password);
+      if (res.status === 200) {
+        setUser(res.data);
+        setIsAuthenticated(true);
+      }
     } catch (error) {
       console.error('Registration failed:', error.response?.data?.message);
     }
@@ -61,13 +64,16 @@ export const AuthProvider = ({ children }) => {
   const logout = async() => {
     try {
       await logoutsession()
+      Cookies.remove("token");
+      setUser(null);
+      setIsAuthenticated(false);
     } catch (error) {
       console.error('Logout failed:', error.response?.data?.message);
     }
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, register, logout }}>
+    <AuthContext.Provider value={{ IsAuthenticated, user, login, register, logout }}>
       {children}
     </AuthContext.Provider>
   );

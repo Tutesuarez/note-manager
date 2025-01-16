@@ -29,7 +29,7 @@ const Notes = () => {
         await createNote(note);
       }
       fetchNotes();
-      setCurrentNote(null);
+      setCurrentNote();
     } catch (error) {
       console.error('Error saving note:', error);
     }

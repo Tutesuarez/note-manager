@@ -3,7 +3,7 @@ import { Navigate } from 'react-router-dom';
 import { useAuth } from '../context/useAuth';
 
 const ProtectedRoute = ({ children }) => {
-  const { user, loading } = useAuth(); // Traemos la información del usuario y el estado de carga desde el contexto
+  const { IsAuthenticated, loading } = useAuth(); // Traemos la información del usuario y el estado de carga desde el contexto
 
   // Mientras se valida el usuario, mostramos un componente de carga (spinner, texto, etc.)
   if (loading) {
@@ -11,7 +11,7 @@ const ProtectedRoute = ({ children }) => {
   }
 
   // Si no hay un usuario autenticado, redirigimos al login
-  if (!user) {
+  if (!IsAuthenticated) {
     return <Navigate to="/login" replace />;
   }
 

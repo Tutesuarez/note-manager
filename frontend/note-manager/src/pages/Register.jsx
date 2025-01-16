@@ -1,12 +1,18 @@
 import { useState, useContext } from 'react';
 import { Form, Button, Container } from 'react-bootstrap';
 import { AuthContext } from '../context/AuthContext';
+import { useAuth } from '../context/useAuth';
 
 const Register = () => {
   const { register } = useContext(AuthContext);
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  const auth = useAuth
+
+  if (auth.IsAuthenticated) return <Nav to='/task' />
+  
 
   const handleSubmit = (e) => {
     e.preventDefault();

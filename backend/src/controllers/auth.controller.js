@@ -30,7 +30,11 @@ const registerUser = async (req, res) => {
     if (user) {
       const token = generateToken({ id: user._id });
         res.cookie("tokenBE", token, { maxAge: 60 * 60 * 1000, httpOnly: true })
-           .send({ status: "success", redirectURL: "/task" });
+        res.json({
+            id: user._id,
+            username: user.username,
+            email: user.email,
+          })
     } else {
       res.status(400).json({ message: 'Datos de usuario inválidos' });
     }
@@ -76,7 +80,12 @@ const loginUser = async (req, res) => {
         console.log("usurio en login backend", user);
         const token = generateToken(user);
         res.cookie("tokenBE", token, { maxAge: 60 * 60 * 1000, httpOnly: true })
-        res.status(200).json({ status: "success", message: "Login successful" });
+        res.json({
+          id: user._id,
+          username: user.username,
+          email: user.email,
+        });
+        //res.status(200).json({ status: "success", message: "Login successful" });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
