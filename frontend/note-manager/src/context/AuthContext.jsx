@@ -1,7 +1,6 @@
 import { createContext, useState, useEffect, useContext } from 'react';
 import { getUserFromTokenAPI, login as loginUserAPI, register as registerUserAPI, logoutsession } from '../services/api';
 import Cookies from "js-cookie";
-//import { useNavigate } from 'react-router-dom';
 
 export const AuthContext = createContext({
   user: null,
@@ -12,8 +11,6 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [IsAuthenticated, setIsAuthenticated] = useState (false)
   const [loading, setLoading] = useState(true);
-
-  //let goTo = useNavigate()
 
   useEffect(() => {
     const fetchUser = async () => {

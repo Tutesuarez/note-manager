@@ -1,49 +1,40 @@
-import { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Form, Button } from 'react-bootstrap';
 
-const NoteForm = ({ note, onSave }) => {
-  const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
+const NoteForm = ({ onCreate }) => {
+  const [note, setNote] = useState({ title: '', description: '' });
 
-  useEffect(() => {
-    if (note) {
-      setTitle(note.title);
-      setContent(note.content);
-    } else {
-      setTitle('');
-      setContent('');
-    }
-  }, [note]);
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setNote((prev) => ({ ...prev, [name]: value }));
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSave({ id: note?.id, title, content });
+    onCreate(note);
+    setNote({ title: '', description: '' }); // Limpiar formulario
   };
 
   return (
     <Form onSubmit={handleSubmit}>
-      <Form.Group controlId="title">
-        <Form.Label>Title</Form.Label>
+      <Form.Group>
         <Form.Control
           type="text"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          placeholder="Enter title"
+          name="title"
+          placeholder="Title"
+          value={note.title}
+          onChange={handleChange}
+          className='my-2'
         />
+        <Form.Control as="textarea" row={6}
+          name="description"
+          placeholder="Description"
+          value={note.description}
+          onChange={handleChange}
+          className='mb-2'
+        ></Form.Control>
       </Form.Group>
-      <Form.Group controlId="content">
-        <Form.Label>Content</Form.Label>
-        <Form.Control
-          as="textarea"
-          rows={3}
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          placeholder="Enter content"
-        />
-      </Form.Group>
-      <Button variant="primary" type="submit" className="mt-2">
-        {note ? 'Update Note' : 'Add Note'}
-      </Button>
+      <Button type="submit" variant="dark">Add Note</Button>
     </Form>
   );
 };

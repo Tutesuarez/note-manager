@@ -1,10 +1,12 @@
 import { useState, useContext } from 'react';
-import { Form, Button, Container } from 'react-bootstrap';
+import { Form, Button, Container, Card, Row, Col } from 'react-bootstrap';
 import { AuthContext } from '../context/AuthContext';
 import { useAuth } from '../context/useAuth';
+import { useNavigate } from 'react-router-dom';
 
 const Register = () => {
   const { register } = useContext(AuthContext);
+  const navigate = useNavigate()
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -16,12 +18,24 @@ const Register = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    register(username, email, password);
+    try {
+      register(username, email, password);
+      navigate('/task')
+    } catch (error) {
+         console.log('error', error);
+         
+    }
   };
 
   return (
     <Container>
+      <Row className='justify-content-center align-items-center vh-100 container'>
+      <Col md={6} >
+      <Card className='p-2'  >
+      <Card.Title>
       <h2>Register</h2>
+      </Card.Title>
+      <Card.Body>
       <Form onSubmit={handleSubmit}>
       <Form.Group controlId="username">
           <Form.Label>Username</Form.Label>
@@ -50,10 +64,14 @@ const Register = () => {
             placeholder="Enter password"
           />
         </Form.Group>
-        <Button variant="primary" type="submit">
+        <Button variant="dark" type="submit" className='mt-2'>
           Register
         </Button>
       </Form>
+      </Card.Body>
+      </Card>
+      </Col>
+      </Row>
     </Container>
   );
 };

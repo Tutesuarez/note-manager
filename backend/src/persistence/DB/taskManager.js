@@ -10,12 +10,13 @@ export default class taskManager{
         }
     }
     
-    async findAll(user){
+    async findAll(userId){
+        
         try {
-            const tasksFound = await taskModel.find(user).populate('user')
+            const tasksFound = await taskModel.find({ user: userId }).populate('user');
             return tasksFound
         } catch (error) {
-            
+            return error
         }
     }
     async findOneById(id){

@@ -4,6 +4,8 @@ const taskmanager = new taskManager()
 
 export const findAll = async(user)=>{
     try {
+        console.log('user en task service', user);
+        
         return await taskmanager.findAll(user)
     } catch (error) {
         return error

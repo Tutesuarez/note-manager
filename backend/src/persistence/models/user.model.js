@@ -26,6 +26,14 @@ const userSchema =new Schema({
     timestamps:true
 })
 
+// userSchema.virtual('tasks', {
+//     ref: 'Task',
+//     localField: '_id',
+//     foreignField: 'user',
+// });
+
+// userSchema.set('toJSON', { virtuals: true });
+// userSchema.set('toObject', { virtuals: true });
 
 
 export const userModel = model(userCollection, userSchema)

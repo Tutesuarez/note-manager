@@ -2,9 +2,9 @@ import { findAll, findByid, deleteone, updateone, create} from "../services/task
 import {taskModel} from "../persistence/models/task.model.js"
 
 
-const getAllTasks = async(req, res)=>{
+const getAllTasks = async(req, res)=>{    
     try {
-        const tasksFound = await findAll({user: req.user._id})
+        const tasksFound = await findAll(req.user.id)
         res.status(200).json(tasksFound)
     } catch (error) {
         res.status(500).json({ message: "Error getting tasks" })
@@ -60,13 +60,13 @@ const createTask = async (req, res) => {
     if (!title || !description) {
         return res.status(400).json({ message: ' Data missing' })
     }
-    // console.log(req.user._id)
     try {
         const newTask = new taskModel ({
             title: title, 
             description: description,
-            // user: req.user._id
+            user: req.user.id
         })
+        
         const task = await create(newTask)
         res.status(200).json({ message: 'Task created', task: task })
     } catch (error) {

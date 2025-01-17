@@ -18,6 +18,7 @@ const taskSchema = new Schema({
     user: {
         type: Schema.Types.ObjectId,
         ref: 'User',
+        require: true
     },
 },
     {
@@ -29,8 +30,8 @@ taskSchema.pre('findOne', function () {
     this.populate('user')
 })
 
-// taskSchema.pre('find', function () {
-//     this.populate('user')
-// })
+taskSchema.pre('find', function () {
+    this.populate('user')
+})
 
 export const taskModel = model(taskCollection, taskSchema)
